@@ -2,6 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from source.schemas.reservations import Reservation
+from source.schemas.holidays import Holidays
 
 app = FastAPI()
 
@@ -20,3 +21,8 @@ app.add_middleware(
 @app.post("/reservations")
 async def create_reservation(reservation: Reservation):
   return {"message": "Reservation created successfully"}
+
+
+@app.get("/holidays", response_model=Holidays)
+async def get_holidays(holidays: Holidays):
+  return {"holidays": ["2021-01-01", "2021-07-04", "2021-12-25"]}
