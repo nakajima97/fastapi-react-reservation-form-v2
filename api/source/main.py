@@ -1,6 +1,8 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
+from source.schemas.reservations import Reservation
+
 app = FastAPI()
 
 origins = [
@@ -15,3 +17,6 @@ app.add_middleware(
   allow_headers=["*"],
 )
 
+@app.post("/reservations")
+async def create_reservation(reservation: Reservation):
+  return {"message": "Reservation created successfully"}
