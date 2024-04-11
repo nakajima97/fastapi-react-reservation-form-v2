@@ -26,3 +26,7 @@ async def create_reservation(reservation: Reservation):
 @app.get("/holidays", response_model=Holidays)
 async def get_holidays(holidays: Holidays):
   return {"holidays": ["2021-01-01", "2021-07-04", "2021-12-25"]}
+
+@app.post("/holidays", response_model=Holidays)
+async def store_holidays(holidays: Holidays):
+  return {"holidays": ["2021-01-01", "2021-07-04", "2021-12-25"]}
