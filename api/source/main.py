@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from source.schemas.reservations import Reservation
+from source.schemas.reservations import Reservation, ResponseReservation
 from source.schemas.holidays import Holidays
 
 app = FastAPI()
@@ -18,10 +18,15 @@ app.add_middleware(
   allow_headers=["*"],
 )
 
-@app.post("/reservations")
+@app.post("/reservations", response_model=ResponseReservation)
 async def create_reservation(reservation: Reservation):
-  return {"message": "Reservation created successfully"}
-
+  return {
+    "id": 1,
+    "date": "2024-01-01",
+    "name": "テスト　ヨヤク",
+    "email_address": "example@example.com",
+    "phone_number": "123-456-7890"
+  }
 
 @app.get("/holidays", response_model=Holidays)
 async def get_holidays(holidays: Holidays):
