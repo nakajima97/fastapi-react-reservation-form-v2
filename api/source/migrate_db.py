@@ -1,6 +1,6 @@
 from sqlalchemy import create_engine
 
-from models.reservations import Reservations
+from source.models.reservations import Reservations
 
 DB_URL = "mysql+pymysql://root@mysql:3306/reservation_form"
 engine = create_engine(DB_URL, echo=True)
