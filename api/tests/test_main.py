@@ -45,3 +45,13 @@ async def test_create_reservation(async_client):
     assert response_object["email_address"] == base_json["email_address"]
     assert response_object["phone_number"] == base_json["phone_number"]
     assert response_object["id"] == 1
+
+@pytest.mark.asyncio
+async def test_create_holidays(async_client):
+    base_json = {
+        "holidays": ["2024-01-01", "2024-01-02"]
+    }
+    response = await async_client.post("/holidays", json=base_json)
+    assert response.status_code == starlette.status.HTTP_200_OK
+    response_object = response.json()
+    assert response_object["holidays"] == base_json["holidays"]
