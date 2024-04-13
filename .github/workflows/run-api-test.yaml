@@ -3,7 +3,7 @@ on: [pull_request, push]
 jobs:
   run-api-test:
     runs-on: ubuntu-latest
-    default:
+    defaults:
       run:
         working-directory: ./api
     steps:
