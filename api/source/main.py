@@ -1,8 +1,13 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Depends
 from fastapi.middleware.cors import CORSMiddleware
+from sqlalchemy.orm import Session
+
+from source.db import get_db
 
 from source.schemas.reservations import Reservation, ResponseReservation
 from source.schemas.holidays import Holidays
+
+from source.cruds.reservations import store_reservations
 
 app = FastAPI()
 
@@ -19,14 +24,9 @@ app.add_middleware(
 )
 
 @app.post("/reservations", response_model=ResponseReservation)
-async def create_reservation(reservation: Reservation):
-  return {
-    "id": 1,
-    "date": "2024-01-01",
-    "name": "テスト　ヨヤク",
-    "email_address": "example@example.com",
-    "phone_number": "123-456-7890"
-  }
+async def create_reservation(reservation: Reservation, db: Session = Depends(get_db)):
+  reservation = await store_reservations(db, reservation)
+  return reservation
 
 @app.get("/holidays", response_model=Holidays)
 async def get_holidays():
