@@ -22,4 +22,4 @@ jobs:
 
       - name: Run API test
         run: |
-          poetry run pytest -v api/tests
+          poetry run pytest
