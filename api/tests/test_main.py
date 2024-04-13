@@ -31,10 +31,17 @@ async def async_client() -> AsyncClient:
 
 @pytest.mark.asyncio
 async def test_create_reservation(async_client):
-    response = await async_client.post("/reservations", json={
+    base_json = {
         "date": "2024-01-01",
         "name": "テスト　ヨヤク",
         "email_address": "example@example.com",
         "phone_number": "123-456-7890"
-    })
+    }
+    response = await async_client.post("/reservations", json=base_json)
     assert response.status_code == starlette.status.HTTP_200_OK
+    response_object = response.json()
+    assert response_object["date"] == base_json["date"]
+    assert response_object["name"] == base_json["name"]
+    assert response_object["email_address"] == base_json["email_address"]
+    assert response_object["phone_number"] == base_json["phone_number"]
+    assert response_object["id"] == 1
