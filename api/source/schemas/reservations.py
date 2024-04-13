@@ -8,4 +8,4 @@ class Reservation(BaseModel):
     phone_number: str = Field(..., title="Phone number of the person making the reservation", examples="123-456-7890")
 
 class ResponseReservation(Reservation):
-    id: int = Field(..., title="ID of the reservation", example=1)
+    id: int = Field(..., title="ID of the reservation", examples=1)
