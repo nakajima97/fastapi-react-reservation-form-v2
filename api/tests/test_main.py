@@ -43,5 +43,5 @@ async def test_create_reservation(async_client):
     assert response_object["date"] == base_json["date"]
     assert response_object["name"] == base_json["name"]
     assert response_object["email_address"] == base_json["email_address"]
-    assert response_object["phone_number"] == base_json["phone_number"]
+    assert response_object["phone_number"] == base_json["date"]
     assert response_object["id"] == 1
