@@ -4,7 +4,7 @@ from sqlalchemy.orm import Session
 
 from source.db import get_db
 
-from source.schemas.reservations import Reservation, ResponseReservation
+from source.schemas.reservations import Reservation, ResponseReservation, GetReservationResponse
 from source.schemas.holidays import Holidays
 
 from source.cruds.reservations import store_reservations
@@ -23,6 +23,16 @@ app.add_middleware(
   allow_methods=["*"],
   allow_headers=["*"],
 )
+
+@app.get("/reservations", response_model=GetReservationResponse)
+async def get_reservations(db: Session = Depends(get_db)):
+  return [{
+        "id": 1,
+        "date": "2024-04-13",
+        "name": "John Doe",
+        "email_address": "example@example.com",
+        "phone_number": "123-4567-8901",
+    }]
 
 @app.post("/reservations", response_model=ResponseReservation)
 async def create_reservation(reservation: Reservation, db: Session = Depends(get_db)):

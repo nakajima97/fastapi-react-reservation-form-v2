@@ -36,3 +36,29 @@ class ResponseReservation(Reservation):
             ]
         }
     }
+
+class GetReservationResponse(BaseModel):
+    reservations: list[ResponseReservation]
+
+    model_config = {
+        "json_schema_extra": {
+            "examples": [
+                {
+                    "reservations": [
+                        {
+                            "id": 1,
+                            "date": "2024-04-13",
+                            "name": "John Doe",
+                            "email_address": "example@example.com"
+                        },
+                        {
+                            "id": 2,
+                            "date": "2024-04-30",
+                            "name": "Deborah Doe",
+                            "email_address": "example@example.com"
+                        },
+                    ]
+                }
+            ]
+        }
+    }
