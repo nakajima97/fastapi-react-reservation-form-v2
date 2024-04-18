@@ -13,7 +13,7 @@ ASYNC_DB_URL = "sqlite+aiosqlite:///:memory:"
 
 @pytest_asyncio.fixture
 async def async_client() -> AsyncClient:
-    async_engine = create_async_engine(ASYNC_DB_URL, echo=True)
+    async_engine = create_async_engine(ASYNC_DB_URL, echo=False)
     async_session = sessionmaker(autocommit=False, autoflush=False, bind=async_engine, class_=AsyncSession)
 
     async with async_engine.begin() as conn:
@@ -45,6 +45,30 @@ async def test_create_reservation(async_client):
     assert response_object["email_address"] == base_json["email_address"]
     assert response_object["phone_number"] == base_json["phone_number"]
     assert response_object["id"] == 1
+
+@pytest.mark.asyncio
+async def test_get_reservations_no_data(async_client):
+    response = await async_client.get("/reservations")
+    assert response.status_code == starlette.status.HTTP_200_OK
+    response_object = response.json()
+    assert response_object["reservations"] == []
+
+@pytest.mark.asyncio
+async def test_post_reservation_and_get_reservations(async_client):
+    base_json = {
+        "date": "2024-01-01",
+        "name": "テスト　ヨヤク",
+        "email_address": "example@example.com",
+        "phone_number": "123-456-7890"
+    }
+    await async_client.post("/reservations", json=base_json)
+    response = await async_client.get("/reservations")
+    assert response.status_code == starlette.status.HTTP_200_OK
+    response_object = response.json()
+    assert response_object["reservations"][0]["date"] == base_json["date"]
+    assert response_object["reservations"][0]["name"] == base_json["name"]
+    assert response_object["reservations"][0]["email_address"] == base_json["email_address"]
+    assert response_object["reservations"][0]["phone_number"] == base_json["phone_number"]
 
 @pytest.mark.asyncio
 async def test_create_holidays(async_client):
