@@ -6,6 +6,10 @@ import source.schemas.holidays as holidays_schema
 
 async def store_calendars(db: AsyncSession, holidays: holidays_schema.Holidays) -> calendars_model.Calendars:
     for holiday in holidays.holidays:
+        result = await db.execute(select(calendars_model.Calendars.date).filter(calendars_model.Calendars.date == holiday))
+        if result.scalar() is not None:
+            continue
+
         calendar = calendars_model.Calendars(date=holiday, is_holiday=True)
         db.add(calendar)
     await db.commit()
