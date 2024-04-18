@@ -1,14 +1,7 @@
-from fastapi import FastAPI, Depends
+from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from sqlalchemy.orm import Session
 
-from source.db import get_db
-
-from source.schemas.reservations import Reservation, ResponseReservation, GetReservationResponse
-from source.schemas.holidays import Holidays
-
-from source.cruds.reservations import store_reservations, fetch_reservations
-from source.cruds.calendars import store_calendars, fetch_holidays
+from source.routers import reservations, holidays
 
 app = FastAPI()
 
@@ -24,20 +17,5 @@ app.add_middleware(
   allow_headers=["*"],
 )
 
-@app.get("/reservations", response_model=GetReservationResponse)
-async def get_reservations(db: Session = Depends(get_db)):
-  return await fetch_reservations(db)
-
-@app.post("/reservations", response_model=ResponseReservation)
-async def create_reservation(reservation: Reservation, db: Session = Depends(get_db)):
-  reservation = await store_reservations(db, reservation)
-  return reservation
-
-@app.get("/holidays", response_model=Holidays)
-async def get_holidays(db: Session = Depends(get_db)):
-  return await fetch_holidays(db)
-
-@app.post("/holidays", response_model=Holidays)
-async def store_holidays(holidays: Holidays, db: Session = Depends(get_db)):
-  calendar = await store_calendars(db, holidays)
-  return calendar
+app.include_router(reservations.router)
+app.include_router(holidays.router)
