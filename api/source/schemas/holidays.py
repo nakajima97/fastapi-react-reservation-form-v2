@@ -3,4 +3,12 @@ from typing import List
 import datetime
 
 class Holidays(BaseModel):
-  holidays: List[datetime.date] = Field(..., title="List of dates that are holidays", examples=["2021-01-01", "2021-07-04", "2021-12-25"])
+    holidays: List[datetime.date] = Field(..., title="List of dates that are holidays")
+
+    model_config = {
+        "json_schema_extra": {
+            "examples": [{
+                "holidays": ["2024-05-01", "2024-05-02", "2024-05-05"]
+            }]
+        }
+    }
