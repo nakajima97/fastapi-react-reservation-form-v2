@@ -5,10 +5,12 @@ import starlette.status
 from httpx import AsyncClient, ASGITransport
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
 from sqlalchemy.orm import sessionmaker
+import datetime
 
 from source.db import get_db, Base
 from source.main import app
 from source.config import settings
+import source.models.calendars as calendars_model
 
 ASYNC_DB_URL = "sqlite+aiosqlite:///:memory:"
 
@@ -16,11 +18,11 @@ headers = {
     'X-API-Key': settings.API_KEY
 }
 
+async_engine = create_async_engine(ASYNC_DB_URL, echo=False)
+async_session = sessionmaker(autocommit=False, autoflush=False, bind=async_engine, class_=AsyncSession)
+
 @pytest_asyncio.fixture
 async def async_client() -> AsyncClient:
-    async_engine = create_async_engine(ASYNC_DB_URL, echo=False)
-    async_session = sessionmaker(autocommit=False, autoflush=False, bind=async_engine, class_=AsyncSession)
-
     async with async_engine.begin() as conn:
         await conn.run_sync(Base.metadata.drop_all)
         await conn.run_sync(Base.metadata.create_all)
@@ -93,11 +95,20 @@ async def test_get_holidays_no_data(async_client):
     assert response_object["holidays"] == []
 
 @pytest.mark.asyncio
-async def test_post_holidays_and_get_holidays(async_client):
+async def test_post_holidays_with_data(async_client):
     base_json = {
         "holidays": ["2024-01-01", "2024-01-02"]
     }
-    await async_client.post("/holidays", json=base_json, headers=headers)
+
+    async with async_session() as session:
+        date1 = datetime.date(2024, 1, 1)
+        date2 = datetime.date(2024, 1, 2)
+        calendar1 = calendars_model.Calendars(date=date1, is_holiday=True)
+        calendar2 = calendars_model.Calendars(date=date2, is_holiday=True)
+        session.add(calendar1)
+        session.add(calendar2)
+        await session.commit()
+
     response = await async_client.get("/holidays")
     assert response.status_code == starlette.status.HTTP_200_OK
     response_object = response.json()
