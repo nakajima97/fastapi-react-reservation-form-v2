@@ -107,7 +107,7 @@ async def test_get_holidays_no_data(async_client):
     assert response_object["holidays"] == []
 
 @pytest.mark.asyncio
-async def test_post_holidays_with_data(async_client):
+async def test_get_holidays_with_data(async_client):
     base_json = {
         "holidays": ["2024-01-01", "2024-01-02"]
     }
