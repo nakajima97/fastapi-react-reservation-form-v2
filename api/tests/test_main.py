@@ -113,8 +113,8 @@ async def test_get_holidays_with_data(async_client):
     }
 
     async with async_session() as session:
-        date1 = datetime.date(2024, 1, 1)
-        date2 = datetime.date(2024, 1, 2)
+        date1 = datetime.datetime.strptime(base_json["holidays"][0], "%Y-%m-%d")
+        date2 = datetime.datetime.strptime(base_json["holidays"][1], "%Y-%m-%d")
         calendar1 = calendars_model.Calendars(date=date1, is_holiday=True)
         calendar2 = calendars_model.Calendars(date=date2, is_holiday=True)
         session.add(calendar1)
