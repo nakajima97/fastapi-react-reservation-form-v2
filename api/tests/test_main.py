@@ -11,6 +11,7 @@ from source.db import get_db, Base
 from source.main import app
 from source.config import settings
 import source.models.calendars as calendars_model
+import source.models.reservations as reservations_model
 
 ASYNC_DB_URL = "sqlite+aiosqlite:///:memory:"
 
@@ -61,14 +62,25 @@ async def test_get_reservations_no_data(async_client):
     assert response_object["reservations"] == []
 
 @pytest.mark.asyncio
-async def test_post_reservation_and_get_reservations(async_client):
+async def test_get_reservations_with_data(async_client):
     base_json = {
         "date": "2024-01-01",
         "name": "テスト　ヨヤク",
         "email_address": "example@example.com",
         "phone_number": "123-456-7890"
     }
-    await async_client.post("/reservations", json=base_json)
+
+    async with async_session() as session:
+        date = datetime.date(2024, 1, 1)
+        reservation = reservations_model.Reservations(
+            date = datetime.datetime.strptime(base_json["date"], "%Y-%m-%d"),
+            name = base_json["name"],
+            email_address = base_json["email_address"],
+            phone_number = base_json["phone_number"]
+        )
+        session.add(reservation)
+        await session.commit()
+
     response = await async_client.get("/reservations")
     assert response.status_code == starlette.status.HTTP_200_OK
     response_object = response.json()
