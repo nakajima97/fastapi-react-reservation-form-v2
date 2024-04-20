@@ -1,4 +1,4 @@
-on: [pull_request]
+on: [pull_request, push]
 
 jobs:
   run-api-test:
@@ -19,6 +19,10 @@ jobs:
         run: |
           pip install poetry
           poetry install --no-root
+
+      - name: Copy config.py
+        run: |
+          cp source/config.py.sample source/config.py
 
       - name: Run API test
         run: |
