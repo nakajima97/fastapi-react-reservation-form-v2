@@ -8,8 +8,13 @@ from sqlalchemy.orm import sessionmaker
 
 from source.db import get_db, Base
 from source.main import app
+from source.config import settings
 
 ASYNC_DB_URL = "sqlite+aiosqlite:///:memory:"
+
+headers = {
+    'X-API-Key': settings.API_KEY
+}
 
 @pytest_asyncio.fixture
 async def async_client() -> AsyncClient:
@@ -75,7 +80,7 @@ async def test_create_holidays(async_client):
     base_json = {
         "holidays": ["2024-01-01", "2024-01-02"]
     }
-    response = await async_client.post("/holidays", json=base_json)
+    response = await async_client.post("/holidays", json=base_json, headers=headers)
     assert response.status_code == starlette.status.HTTP_200_OK
     response_object = response.json()
     assert response_object["holidays"] == base_json["holidays"]
@@ -92,7 +97,7 @@ async def test_post_holidays_and_get_holidays(async_client):
     base_json = {
         "holidays": ["2024-01-01", "2024-01-02"]
     }
-    await async_client.post("/holidays", json=base_json)
+    await async_client.post("/holidays", json=base_json, headers=headers)
     response = await async_client.get("/holidays")
     assert response.status_code == starlette.status.HTTP_200_OK
     response_object = response.json()
