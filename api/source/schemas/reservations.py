@@ -1,6 +1,8 @@
 from pydantic import BaseModel, Field
 import datetime
 
+from source.domain_models.domains.phone_number import PhoneNumber
+
 class Reservation(BaseModel):
     date: datetime.date = Field(..., title="Date of the reservation")
     name: str = Field(..., title="Name of the person making the reservation")
